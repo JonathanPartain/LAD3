@@ -12,7 +12,7 @@ public class Gothenburg {
     public static void main(String[] args){
         findGBG(2,"Brunnsparken","Centralstationen");
         
-        // findGBG(0,"Lilla Bommen","Chalmers");
+        findGBG(0,"Lilla Bommen","Chalmers");
         
         // findGBG(23*60+44,"Lilla","Vasa V");
         
