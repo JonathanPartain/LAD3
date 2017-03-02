@@ -7,7 +7,7 @@ import java.util.List;
 public class TramNetwork{
     
     private List<Tram> trams = new ArrayList<Tram>();
-    private SortedList<Station> stationList;
+    private SortedListImpl<Station> stationList;
     
     /** The set of stations in the network */
     public final Station[] stations;
@@ -16,7 +16,7 @@ public class TramNetwork{
         stations = new Station[stationNames.length];
         for(int i = 0; i < stationNames.length; i++)
             stations[i] = new Station(stationNames[i],i);
-        stationList = new SortedList<Station>();
+        stationList = new SortedListImpl<Station>();
         for(Station s : stations) stationList.add(s);
     }
     
@@ -99,7 +99,7 @@ public class TramNetwork{
         private int[] stopTimes;
         
         private Tram(String name, Integer[] startTimes, StationTime[] stopTimes) {
-            this.startTimes = new SortedList<Integer>();
+            this.startTimes = new SortedListImpl<>();
             this.startTimes.addSortedArray(startTimes);
             
             this.name = name;
