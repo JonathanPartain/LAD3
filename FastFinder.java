@@ -31,50 +31,60 @@ public class FastFinder {
 
         // according to TramFinder class that should be correct right?
 
+        Heap<TramFinder.TravelLeg> tmpHeap1 = new Heap<>();
         for (TramNetwork.TramConnection tc : from.tramsFrom) {
 
             int waitTime = tc.tram.waitingTime(currentTime, from);
 
-            heap.add(new TramFinder.TravelLeg(tc.tram, from, tc.to, currentTime + waitTime, tc.timeTaken));
+            tmpHeap1.add(new TramFinder.TravelLeg(tc.tram, from, tc.to, currentTime + waitTime, tc.timeTaken));
         }
 
+        heap.add(tmpHeap1.removeMin());
+
         visited[from.id] = true;
+        TramFinder.TravelLeg lastPath = null;
 
         while (!heap.isEmpty()) {
 
             tmpPath = heap.removeMin();
+            lastPath = tmpPath;
 
 
             if (tmpPath.station.equals(to)) {
-                heap = new Heap<>();
-                continue;
+                bestPath.add(new TramFinder.TravelLeg(null,to, to, 0,0));
+                break;
             }
 
             if (!visited[tmpPath.next.id]) {
 
+                Heap<TramFinder.TravelLeg> tmpHeap = new Heap<>();
                 for (TramNetwork.TramConnection conn : tmpPath.next.tramsFrom) {
 
                     int waitTime = conn.tram.waitingTime(tmpPath.time, tmpPath.next);
-
-                    stations.add(new Node(conn.to, waitTime));
-
-
-
-                    heap.add(new TramFinder.TravelLeg(conn.tram, tmpPath.next, conn.to, tmpPath.time + waitTime, conn.timeTaken));
+                    // check time calculation
+                    tmpHeap.add(new TramFinder.TravelLeg(conn.tram, tmpPath.next, conn.to, tmpPath.time + waitTime, conn.timeTaken));
 
                 }
+
+                heap.add(tmpHeap.removeMin());
+
 
                 visited[tmpPath.station.id] = true;
             }
 
-            allPaths.add(tmpPath);
 
         }
+        heap.add(lastPath);
 
-        for (Node n : stations) {
-            System.out.println("From: " + n.from.toString() + ", w: " + n.weight);
+        while (!heap.isEmpty()) {
+
+            TramFinder.TravelLeg tmpLeg = heap.removeMin();
+
+            bestPath.add(tmpLeg);
         }
-
+        for (TramFinder.TravelLeg t : bestPath) {
+            System.out.println("Tram " + t.tram  + ", time: " + (t.time+t.travelTime));
+        }
 
         return null;
     }
