@@ -1,7 +1,5 @@
 import java.util.LinkedList;
 
-
-
 public class Gothenburg {
 
     private Gothenburg(){    }; // This is a static class
@@ -10,17 +8,17 @@ public class Gothenburg {
     public static final TramNetwork GOTHENBURG;
 
     public static void main(String[] args){
-        findGBG(2,"Brunnsparken","Centralstationen");
+        findGBG(2,"Hj","Fri");
         
-        findGBG(0,"Lilla Bommen","Chalmers");
+//        findGBG(0,"Lilla Bommen","Chalmers");
         
-        // findGBG(23*60+44,"Lilla","Vasa V");
+//        findGBG(23*60+44,"Lilla","Vasa V");
         
-        // findGBG(23*60+50,"Hjal","Chal");
+//        findGBG(23*60+50,"Hjal","Chal");
         
-        // findGBG(23*60+50,"Hjal","Kor");
+//        findGBG(23*60+50,"Hjal","Kor");
         
-        // findGBG(23*60+50,"Kor","Chal");
+//        findGBG(23*60+50,"Kor","Chal");
         
     }
     
@@ -30,7 +28,7 @@ public class Gothenburg {
         System.out.println("Finding route from " + sfrom+ " to " + sto);
         TramFinder.TravelLeg[] deps = TramFinder.findRoute(GOTHENBURG, time, sfrom, sto);
         TramFinder.printTravel(deps);
-        System.out.println("***");
+        System.out.println("\n********\n");
         
         int time1 = deps==null ? -1 : (deps.length == 0) ? 0 : deps[deps.length-1].getArrivalTime()-time;
         

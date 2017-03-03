@@ -1,5 +1,4 @@
 import java.util.LinkedList;
-import java.util.List;
 
 public class FastFinder {
 
@@ -10,59 +9,49 @@ public class FastFinder {
 		int bestTime = -1; // from recursive
 		TramFinder.TravelLeg[] bestPath = null; // from recursive
 		Heap<TramFinder.TravelLeg> heap = new Heap<>();
-		TramFinder.TravelLeg tmpTravelLeg = null;
+		TramNetwork.Station tmpStation = null;
 
-		if (from.equals(to)) { // from recursive
-			if (bestTime == -1 || currentTime < bestTime) { // from recursive
-				bestTime = currentTime; // from recursive
-				bestPath = currentPath.toArray(new TramFinder.TravelLeg[0]); // from recursive
-			}
-		} else {
-			for (TramNetwork.TramConnection conn : from.tramsFrom) { // from recursive
-				int waitTime = conn.tram.waitingTime(currentTime, from); // from recursive
-				heap.add(new TramFinder.TravelLeg(conn.tram, from, conn.to, currentTime + waitTime, conn.timeTaken)); // adding to heap if from is not equals to
-			}
-			visited[from.id] = true; // from recursive
-
+		for (TramNetwork.TramConnection conn : from.tramsFrom) { // from recursive
+			int waitTime = conn.tram.waitingTime(currentTime, from); // from recursive
+			heap.add(new TramFinder.TravelLeg(conn.tram, conn.from, conn.to, currentTime + waitTime, conn.timeTaken));
+			currentPath.add(new TramFinder.TravelLeg(conn.tram, from, to, currentTime + waitTime, conn.timeTaken));
 		}
 
-		// for(int i = 0; i < heap.size()+1;i++)
-		// System.err.println(heap.removeMin().station);
-		//
+		visited[from.id] = true;
+		tmpStation = from;
+		
+//		System.err.println(tmpStation);
+
+//		 for(int i = 0; i < heap.size();i++)
+//			 System.err.println(heap.removeMin());
+		
 		while (!heap.isEmpty()) { // all codes should be in a while loop because of recursive
-			tmpTravelLeg = heap.removeMin();
-			// System.err.println(tmpTravelLeg.next);
-			List<TramNetwork.TramConnection> fromHere = tmpTravelLeg.next.tramsFrom; // from recursive
-			for (TramNetwork.TramConnection conn : fromHere) { // from recursive
-
-				int waitTime = conn.tram.waitingTime(currentTime, tmpTravelLeg.next); // from recursive
-
-				TramFinder.TravelLeg dep = new TramFinder.TravelLeg(conn.tram, from, conn.to, currentTime + waitTime,
-						conn.timeTaken); // from recursive
-				currentPath.addLast(dep);
-				System.err.println(currentPath.size());
+									
+			for (TramNetwork.TramConnection conn : tmpStation.tramsFrom) { // from recursive
 				// RECURSIVE SHOULD START HERE
-				if (visited[tmpTravelLeg.next.id]) {
-					currentPath.removeLast();// from recursive
+				if (visited[tmpStation.id]) {
 					continue; // from recursive
 				}
-
-				if (tmpTravelLeg.next.equals(to)) { // from recursive
+				if (tmpStation.equals(to)) { // from recursive
 					if (bestTime == -1 || currentTime < bestTime) { // from recursive
 						bestTime = currentTime; // from recursive
 						bestPath = currentPath.toArray(new TramFinder.TravelLeg[0]); // from recursive
-																						
-
 					}
-					System.err.println("here: " + tmpTravelLeg.next);
+//					System.err.println("here: " + tmpStation);
 					break; // from recursive
-				} else {
-					heap.add(dep);
-					visited[tmpTravelLeg.next.id] = true; // from recursive
 				}
-//				System.err.println(currentPath.size());
-			}
+				currentPath.removeLast();
+				int waitTime = conn.tram.waitingTime(currentTime, tmpStation); // from recursive
 
+				TramFinder.TravelLeg dep = new TramFinder.TravelLeg(conn.tram, conn.from, to, currentTime + waitTime, conn.timeTaken); // from recursive
+				currentPath.addLast(dep);
+//				System.err.println(dep.station);
+				heap.add(dep);
+			}
+			visited[tmpStation.id] = true; // from recursive
+//			System.err.println(tmpStation + " " + visited[tmpStation.id]);
+			tmpStation = heap.removeMin().next;
+			
 		}
 		return bestPath;
 	}
