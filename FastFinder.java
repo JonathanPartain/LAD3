@@ -35,7 +35,7 @@ public class FastFinder {
 			List<TramNetwork.TramConnection> fromHere = tmpTravelLeg.next.tramsFrom; // from recursive
 			for (TramNetwork.TramConnection conn : fromHere) { // from recursive
 
-				int waitTime = conn.tram.waitingTime(currentTime, from); // from recursive
+				int waitTime = conn.tram.waitingTime(currentTime, tmpTravelLeg.next); // from recursive
 
 				TramFinder.TravelLeg dep = new TramFinder.TravelLeg(conn.tram, from, conn.to, currentTime + waitTime,
 						conn.timeTaken); // from recursive
