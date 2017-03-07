@@ -28,12 +28,14 @@ public class FastFinder {
         // First leg, from "from" to shortest.
 
 
+
         for (TramNetwork.TramConnection tc : from.tramsFrom) {
 
             int waitTime = tc.tram.waitingTime(currentTime, from);
 
             heap.add(new TramFinder.TravelLeg(tc.tram, from, tc.to, tc.timeTaken + waitTime , tc.timeTaken));
             prevPath.add(new TramFinder.TravelLeg(tc.tram, tc.from, tc.to, tc.timeTaken + waitTime, tc.timeTaken));
+
 
 
         }
@@ -65,6 +67,7 @@ public class FastFinder {
                 bestPath.add(lastPath);
                 // UPDATE prevPATH SOMEWHERE
                 // MOVE -> UPDATE -> MOVE -> UPDATE
+
 
 
                 heap = new Heap<>();
