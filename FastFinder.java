@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 // Implement this!
 public class FastFinder {
@@ -11,106 +13,73 @@ public class FastFinder {
      **/
     public static TramFinder.TravelLeg[] findRoute(TramNetwork nw, int currentTime, TramNetwork.Station from, TramNetwork.Station to) {
 
-        // Hint: You need to use TramFinder.TravelLeg because this is outside
-        // the TramFinder class. Example:
-        // TramFinder.TravelLeg[] fastest = new
-        // TramFinder.TravelLeg[nw.stations.length];
-
-        boolean[] visited = new boolean[nw.stations.length];
-
-
-        ArrayList<TramFinder.TravelLeg> bestPath = new ArrayList<>();
-
-
+        TramFinder.TravelLeg[] travelLegs = new TramFinder.TravelLeg[nw.stations.length];
         Heap<TramFinder.TravelLeg> heap = new Heap<>();
-        Heap<TramFinder.TravelLeg> prevPath = new Heap<>();
 
-        // First leg, from "from" to shortest.
-
-
-
+        // Add all connections leaving from Station from.
         for (TramNetwork.TramConnection tc : from.tramsFrom) {
+        	
+        	int waitTime = tc.tram.waitingTime(currentTime, from);
+            heap.add(new TramFinder.TravelLeg(tc.tram, from, tc.to, currentTime + waitTime , tc.timeTaken));
+ 
+        }
+        
 
-            int waitTime = tc.tram.waitingTime(currentTime, from);
+        // make sure removeMin is possible
+        while (!heap.isEmpty()) {
+        	// take the "smallest" travelLeg
+        	TramFinder.TravelLeg leg = heap.removeMin();
 
-            heap.add(new TramFinder.TravelLeg(tc.tram, from, tc.to, tc.timeTaken + waitTime , tc.timeTaken));
-            prevPath.add(new TramFinder.TravelLeg(tc.tram, tc.from, tc.to, tc.timeTaken + waitTime, tc.timeTaken));
 
+        	// if next station has been visited, restart the while loop.
+            if (travelLegs[leg.next.id] != null) {
+                continue;
+            }
+            // "visit" the next station, add it using stations id as index.
+            // potential issues if stations have weird IDs, that are larger than network size
+        	travelLegs[leg.next.id] = leg;
 
+            // find the destination station
+        	if (leg.next.equals(to)) {
+        		break;
+        	}
 
+        	// get all connections from the next station
+            // add to heap.
+            for (TramNetwork.TramConnection conn : leg.next.tramsFrom) {
+                int waitTime = conn.tram.waitingTime(leg.time, leg.next);
+                heap.add(new TramFinder.TravelLeg(conn.tram, conn.from, conn.to, leg.time + waitTime, conn.timeTaken));
+
+            }
+            // start over...
         }
 
-        visited[from.id] = true;
-        TramFinder.TravelLeg lastPath;
+        // Arraylist to make it easier to reverse
+        List<TramFinder.TravelLeg> reversePath = new ArrayList<>();
+        TramFinder.TravelLeg tmp;
 
-
-        while (!heap.isEmpty()) {
-
-            lastPath = heap.removeMin();
-
-
-
-
-
-
-            if (lastPath.next.equals(to)) {
-
-                bestPath.add(lastPath);
+        tmp = travelLegs[to.id];
+        // add non-null values to reversePath
+        while (tmp != null) {
+            reversePath.add(tmp);
+            // found destination, break!
+            if (tmp.station .equals(from)) {
                 break;
             }
-
-
-
-
-            if (!visited[lastPath.next.id]) {
-
-                bestPath.add(lastPath);
-                // UPDATE prevPATH SOMEWHERE
-                // MOVE -> UPDATE -> MOVE -> UPDATE
-
-
-
-                heap = new Heap<>();
-
-
-
-                for (TramNetwork.TramConnection conn : lastPath.next.tramsFrom) {
-
-
-
-                    int waitTime = conn.tram.waitingTime(lastPath.time, lastPath.next);
-
-
-                    heap.add(new TramFinder.TravelLeg(conn.tram, conn.from, conn.to, lastPath.time + waitTime, conn.timeTaken));
-
-                }
-
-
-                visited[lastPath.station.id] = true;
-            }
-
-            if (heap.isEmpty()) {
-                // might be needed
-                // prevPath.removeMin();
-                // empty bestpath
-                bestPath = new ArrayList<>();
-                heap = prevPath;
-                Arrays.fill(visited, Boolean.FALSE);
-            }
-
-
+            // take .station, since travellegs were added using .next
+            // it will be possible to backtrace this way
+            tmp = travelLegs[tmp.station.id];
         }
 
-
-        TramFinder.TravelLeg[] print = new TramFinder.TravelLeg[bestPath.size()];
-        int index = 0;
-        for (TramFinder.TravelLeg t : bestPath) {
-            print[index] = t;
-            index++;
-        }
-
-
-        return print;
+        // reverse array
+        Collections.reverse(reversePath);
+        // array to be returned
+        TramFinder.TravelLeg[] ret = new TramFinder.TravelLeg[reversePath.size()];
+        // to normal array
+        reversePath.toArray(ret);
+        return ret;
+        
+    
     }
 
 

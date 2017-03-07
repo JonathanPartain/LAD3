@@ -58,10 +58,7 @@ public class RandomNetwork{
 
         for (int i = 0; i < numTrams ; i++)
             randomTram(nw,i);
-        
-        
-      
-      
+
         return nw;
       
     }

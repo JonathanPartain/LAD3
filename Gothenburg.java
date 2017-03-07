@@ -10,17 +10,17 @@ public class Gothenburg {
     public static final TramNetwork GOTHENBURG;
 
     public static void main(String[] args){
-      //  findGBG(2,"Brunnsparken","Centralstationen");
+        findGBG(2,"Brunnsparken","Centralstationen");
         
-        //findGBG(0,"Lilla Bommen","Chalmers");
+        findGBG(0,"Lilla Bommen","Chalmers");
         
-        //findGBG(23*60+44,"Lilla","Vasa V");
+        findGBG(23*60+44,"Lilla","Vasa V");
         
-        // findGBG(23*60+50,"Hjal","Chal");
+        findGBG(23*60+50,"Hjal","Chal");
         
         findGBG(23*60+50,"Hjal","Kor");
         
-        //findGBG(23*60+50,"Kor","Chal");
+        findGBG(23*60+50,"Kor","Chal");
         
     }
     
